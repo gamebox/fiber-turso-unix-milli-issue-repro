@@ -3,6 +3,7 @@ module anthonybullard.com/fiberGoTursoMillis/v2
 go 1.20
 
 require (
+	github.com/goccy/go-json v0.10.2
 	github.com/gofiber/fiber/v2 v2.48.0
 	github.com/gofiber/template/html/v2 v2.0.5
 	github.com/libsql/libsql-client-go v0.0.0-20230821143203-d21eb9b18da3

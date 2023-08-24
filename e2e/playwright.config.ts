@@ -11,6 +11,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.HOST ? process.env.HOST : 'http://127.0.0.1:3003/',
     trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
 
   projects: [

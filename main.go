@@ -2,11 +2,11 @@ package main
 
 import (
 	"database/sql"
+	_ "embed"
 	"log"
 	"os"
-	"time"
-    _ "embed"
 
+	json "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	_ "github.com/libsql/libsql-client-go/libsql"
@@ -17,9 +17,20 @@ type Controller struct {
     db *sql.DB
 }
 
+type NullInt64 struct {
+	sql.NullInt64
+}
+
+func (ni *NullInt64) MarshalJSON() ([]byte, error) {
+	if !ni.Valid {
+		return []byte("null"), nil
+	}
+	return json.Marshal(ni.Int64)
+}
+
 type Data struct {
     Id int `json:"id"`
-    Created int `json:"created"`
+    SomeField NullInt64 `json:"some_field"`
 }
 
 //go:embed schema.sql
@@ -86,7 +97,7 @@ func (ctrl *Controller) createData(c *fiber.Ctx) error {
 } 
 
 func (ctrl *Controller) writeData() error {
-    _, err := ctrl.db.Exec("INSERT INTO data (created) VALUES (?)", time.Now().UnixMilli())
+    _, err := ctrl.db.Exec("INSERT INTO data (some_field) VALUES (1000000)")
     if err != nil {
         return err
     }
@@ -94,7 +105,7 @@ func (ctrl *Controller) writeData() error {
 }
 
 func (ctrl *Controller) getData() ([]Data, error) {
-    rows, err := ctrl.db.Query("SELECT id, created FROM data;")
+    rows, err := ctrl.db.Query("SELECT id, some_field FROM data;")
     datas := make([]Data, 0, 10)
     if err != nil {
         return datas, nil
@@ -108,7 +119,7 @@ func (ctrl *Controller) getData() ([]Data, error) {
         }
         err = rows.Scan(
             &data.Id,
-            &data.Created,
+            &data.SomeField,
         )
         if err != nil {
             return datas, err
