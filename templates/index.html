@@ -1,0 +1,23 @@
+<form method="POST" action="/data">
+    <caption>Create Data</caption>
+    <input type="submit" value="Create" />
+</form>
+
+<h2>Existing Data</h2>
+<table>
+    <thead>
+      <tr>
+          <th>Id</th>
+          <th>Created</th>
+      </tr>  
+    </thead>
+    <tbody>
+        {{range .Data}}
+        <tr>
+            <td>{{.Id}}</td>
+            <td>{{.Created}}</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+
